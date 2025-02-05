@@ -136,6 +136,7 @@ class IntentRouter(Tool):
         """
         selected_outcome = params["outcome"]
         transitions = self.get_external_transitions()
+        origin_stage = self.current_stage_name
 
         if selected_outcome not in self.current_stage.outcomes and selected_outcome not in transitions:
             raise ValueError(f"Unknown outcome '{params['outcome']}' for stage '{self.current_stage_name}'")
@@ -154,6 +155,7 @@ class IntentRouter(Tool):
             self.backtracking_stack.append(self.current_stage_name)
             self.current_stage_name = selected_outcome
 
+        log.info("Moving from stage", original_stage=origin_stage, destination_stage=self.current_stage_name)
         return self.get_prompt(), self.current_stage.tools
 
     def get_prompt(self):
